@@ -33,7 +33,7 @@ refs = {
     # renovate: git-refs=https://github.com/kubernetes-monitoring/kubernetes-mixin branch=master
     'ref.kubernetes-mixin': 'ddfa651bc295d2b6659bfef7333d154c72c6e376',
     # renovate: git-refs=https://github.com/etcd-io/etcd branch=main
-    'ref.etcd': 'b6167b7c5d482b14f7a3828628db5de89ad1871e',
+    'ref.etcd': '142cdbfc5fc6361ffb17aa85531ffe6acfa08143',
 }
 
 # Source files list
@@ -202,13 +202,13 @@ replacement_map = {
         'replacement': 'job="{{ $kubeStateMetricsJob }}"',
         'init': '{{- $kubeStateMetricsJob := include "kube-prometheus-stack-kube-state-metrics.name" . }}'},
     'job="{{ $kubeStateMetricsJob }}"': {
-        'replacement': 'job="{{ $kubeStateMetricsJob }}", namespace=~"{{ $targetNamespace }}"',
+        'replacement': 'job="{{ $kubeStateMetricsJob }}", namespace{{ $namespaceOperator }}"{{ $targetNamespace }}"',
         'limitGroup': ['kubernetes-apps'],
-        'init': '{{- $targetNamespace := .Values.defaultRules.appNamespacesTarget }}'},
+        'init': '{{- $targetNamespace := .Values.defaultRules.appNamespacesTarget }}{{- $namespaceOperator := .Values.defaultRules.appNamespacesOperator | default "=~" }}'},
     'job="kubelet"': {
-        'replacement': 'job="kubelet", namespace=~"{{ $targetNamespace }}"',
+        'replacement': 'job="kubelet", namespace{{ $namespaceOperator }}"{{ $targetNamespace }}"',
         'limitGroup': ['kubernetes-storage'],
-        'init': '{{- $targetNamespace := .Values.defaultRules.appNamespacesTarget }}'},
+        'init': '{{- $targetNamespace := .Values.defaultRules.appNamespacesTarget }}{{- $namespaceOperator := .Values.defaultRules.appNamespacesOperator | default "=~" }}'},
     'runbook_url: https://runbooks.prometheus-operator.dev/runbooks/': {
         'replacement': 'runbook_url: {{ .Values.defaultRules.runbookUrl }}/',
         'init': ''},
